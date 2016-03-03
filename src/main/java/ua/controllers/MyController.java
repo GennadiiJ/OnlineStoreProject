@@ -33,6 +33,9 @@ public class MyController {
         if(!model.containsAttribute("cart")) {
             model.addAttribute("cart", new ArrayList<Product>());
         }
+		
+		// try arrlist = model.getatribute "cart"; catch  model addAttribute new arr list "cart"
+
 
         model.addAttribute("categories", contactService.listCategories());
 
