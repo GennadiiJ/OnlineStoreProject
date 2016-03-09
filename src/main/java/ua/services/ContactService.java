@@ -23,7 +23,7 @@ public class ContactService {
     private ClientDAO clientDAO;
     @Autowired
     private OrderDAO orderDAO;
-
+//del
     @Transactional
     public void addClient(Client client){
         clientDAO.add(client);
