@@ -24,7 +24,6 @@ public class ContactService {
     @Autowired
     private OrderDAO orderDAO;
 
-
     @Transactional
     public void addClient(Client client){
         clientDAO.add(client);

@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="shortcut icon" href="/png/icon.png">
+
     <style>
 
         .navbar {
             margin-bottom: 10px;
             border-radius: 0;
         }
-
 
         .jumbotron {
             margin-bottom: 0;
@@ -25,9 +26,7 @@
             color: white;
         }
 
-
         footer {
-            background-color: #f2f2f2;
             padding: 20px;
         }
 
@@ -76,7 +75,7 @@
                         <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout </a></li>
                     </c:when>
                     <c:otherwise>
-                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Sing in </a></li>
+                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Sing In </a></li>
                     </c:otherwise>
                 </c:choose>
             </ul>
@@ -85,10 +84,10 @@
 </nav>
 
 <div class="container">
-    <h3 style="margin-bottom: 20px;">Contact</h3>
+    <h3 style="margin-bottom: 10px;">Contact</h3>
     <p>This website was created for studying purposes only and it is not a real online store.</p>
-    <p>You can contact me on zaporozhets@email.cz</p>
-</div>
+    <p>Please contact zaporozhets@email.cz</p>
+</div><br>
 
 <script>
     $('.dropdown-toggle').dropdown();

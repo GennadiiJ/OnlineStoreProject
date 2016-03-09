@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ua.domain.*;
 import ua.services.ContactService;
+import ua.services.SessionService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,21 +24,18 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/")
-@SessionAttributes({"cart"})
+/*@SessionAttributes({"cart"})*/
 public class MyController {
 
     @Autowired
     private ContactService contactService;
+    @Autowired
+    private SessionService sessionService;
 
     @RequestMapping("/")
-    public String index(Model model) {
-
-        if(!model.containsAttribute("cart")) {
-            model.addAttribute("cart", new ArrayList<Product>());
-        }
-		
-		// try arrlist = model.getatribute "cart"; catch  model addAttribute new arr list "cart"
-
+    public String index(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
 
         model.addAttribute("categories", contactService.listCategories());
 
@@ -44,12 +44,12 @@ public class MyController {
 
 
     @RequestMapping("/edit")
-    public String editPage(Model model) {
-
-        if(!model.containsAttribute("cart")) {
+    public String editPage(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
+        /*if(!model.containsAttribute("cart")) {
             model.addAttribute("cart", new ArrayList<Product>());
-        }
-
+        }*/
         model.addAttribute("categories", contactService.listCategories());
         model.addAttribute("products", contactService.listProducts());
         model.addAttribute("orders", contactService.listOrders());
@@ -59,11 +59,9 @@ public class MyController {
 
 
     @RequestMapping("/category/{id}")
-    public String listCategory(@PathVariable(value = "id") long categoryId, Model model) {
-
-        if(!model.containsAttribute("cart")) {
-            model.addAttribute("cart", new ArrayList<Product>());
-        }
+    public String listCategory(@PathVariable(value = "id") long categoryId, Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
 
         Category category = contactService.findCategory(categoryId);
         model.addAttribute("categories", contactService.listCategories());
@@ -74,17 +72,22 @@ public class MyController {
 
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String search(@RequestParam String pattern, Model model) {
+    public String search(@RequestParam String pattern, Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
 
         model.addAttribute("categories", contactService.listCategories());
         model.addAttribute("products", contactService.searchProducts(pattern));
+
         return "index_products";
     }
 
     /*PRODUCT ADD-DELETE*/
 
    @RequestMapping(value = "/edit/product/delete", method = RequestMethod.POST)
-    public String searchProd(@RequestParam(value = "product") long toDeleteId, Model model) {
+    public String searchProd(@RequestParam(value = "product") long toDeleteId, Model model, HttpServletRequest request) {
+       HttpSession session = request.getSession();
+       sessionService.checkCartSession(session);
 
        contactService.deleteProduct(toDeleteId);
        model.addAttribute("categories", contactService.listCategories());
@@ -99,8 +102,12 @@ public class MyController {
                              @RequestParam String name,
                              @RequestParam String description,
                              @RequestParam int price,
-                             Model model)
+                             Model model,
+                             HttpServletRequest request)
     {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
+
         Category category = contactService.findCategory(categoryId);
         Product product = new Product(category, name, description, price);
         contactService.addProduct(product);
@@ -113,7 +120,9 @@ public class MyController {
     /*CATEGORY ADD-DELETE*/
 
     @RequestMapping(value = "/edit/category/delete", method = RequestMethod.POST)
-    public String searchCat(@RequestParam(value = "category") long toDeleteId, Model model) {
+    public String searchCat(@RequestParam(value = "category") long toDeleteId, Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
 
         contactService.deleteCategory(toDeleteId);
         model.addAttribute("categories", contactService.listCategories());
@@ -125,8 +134,12 @@ public class MyController {
     @RequestMapping(value="/edit/category/add", method = RequestMethod.POST)
     public String groupAdd(@RequestParam String name,
                            @RequestParam(value = "picture") MultipartFile picture,
-                           Model model)
+                           Model model,
+                           HttpServletRequest request)
     {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
+
         try {
             Category category = new Category(
                     name,
@@ -147,12 +160,24 @@ public class MyController {
 
     @RequestMapping(value = "/product/buy/{id}", method = RequestMethod.POST)
     public String buyProduct(@PathVariable(value = "id") long productId,
-                             @ModelAttribute("cart") List<Product> cart,
-                             Model model)
+                             /*@ModelAttribute("cart") List<Product> cart,*/
+                             Model model,
+                             HttpServletRequest request)
     {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
+
         Product product = contactService.findProduct(productId);
+        ArrayList<Product> cart = sessionService.getCart(session);
         cart.add(product);
 
+        //Counting order price
+        int price = 0;
+        for (Product p : cart) {
+            price = price + p.getPrice();
+        }
+
+        model.addAttribute("price", price);
         model.addAttribute("cart", cart);
         model.addAttribute("categories", contactService.listCategories());
 
@@ -161,12 +186,18 @@ public class MyController {
 
 
     @RequestMapping("/cart")
-    public String showCart(Model model, @ModelAttribute("cart") List<Product> cart) {
+    public String showCart(Model model, /*@ModelAttribute("cart") List<Product> cart*/ HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
+        List<Product> cart = sessionService.getCart(session);
 
-        if(!model.containsAttribute("cart")) {
-            model.addAttribute("cart", new ArrayList<Product>());
+        //Counting order price
+        int price = 0;
+        for (Product p : cart) {
+            price = price + p.getPrice();
         }
 
+        model.addAttribute("price", price);
         model.addAttribute("cart", cart);
         model.addAttribute("categories", contactService.listCategories());
 
@@ -176,10 +207,15 @@ public class MyController {
 
     @RequestMapping(value = "/cart/delete/{id}", method = RequestMethod.POST)
     public String cartDelete(@PathVariable(value = "id") long productId,
-                             @ModelAttribute("cart") List<Product> cart,
-                             Model model)
+                             /*@ModelAttribute("cart") List<Product> cart,*/
+                             Model model,
+                             HttpServletRequest request)
     {
-        //Deleting product by id from cart
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
+        List<Product> cart = sessionService.getCart(session);
+
+        //Deleting product by its id from cart
         Iterator<Product> iterator = cart.iterator();
         while (iterator.hasNext()) {
             Product currentProduct = iterator.next();
@@ -189,6 +225,13 @@ public class MyController {
             }
         }
 
+        //Counting order price
+        int price = 0;
+        for (Product p : cart) {
+            price = price + p.getPrice();
+        }
+
+        model.addAttribute("price", price);
         model.addAttribute("cart", cart);
         model.addAttribute("categories", contactService.listCategories());
 
@@ -200,9 +243,14 @@ public class MyController {
     public String cartPay(@RequestParam String name,
                           @RequestParam String email,
                           @RequestParam String phone,
-                          @ModelAttribute("cart") List<Product> cart,
-                          Model model)
+                          /*@ModelAttribute("cart") List<Product> cart,*/
+                          Model model,
+                          HttpServletRequest request)
     {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
+        List<Product> cart = sessionService.getCart(session);
+
         //Checking user's input length
         if ((phone.length() > 13) || (phone.length() < 4)) {
             model.addAttribute("error", "Incorrect phone number. Please enter valid phone number.");
@@ -249,7 +297,7 @@ public class MyController {
             }
 
             cart.clear();
-            model.addAttribute("cart", cart);
+
             model.addAttribute("categories", contactService.listCategories());
 
             return "thanks";
@@ -276,7 +324,6 @@ public class MyController {
 
     @RequestMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
@@ -287,11 +334,9 @@ public class MyController {
 
 
     @RequestMapping("/contact")
-    public String contact(Model model) {
-
-        if(!model.containsAttribute("cart")) {
-            model.addAttribute("cart", new ArrayList<Product>());
-        }
+    public String contact(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        sessionService.checkCartSession(session);
 
         model.addAttribute("categories", contactService.listCategories());
 

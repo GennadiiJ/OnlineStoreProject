@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="shortcut icon" href="/png/icon.png">
+
     <style>
 
         .navbar {
@@ -73,7 +75,7 @@
                         <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout </a></li>
                     </c:when>
                     <c:otherwise>
-                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Sing in </a></li>
+                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Sing In </a></li>
                     </c:otherwise>
                 </c:choose>
             </ul>
@@ -114,20 +116,21 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:set var="totalPrice" value="${0}"/>
+                <%--<c:set var="totalPrice" value="${0}"/>--%>
                 <c:forEach items="${cart}" var="product">
                     <tr>
                         <td>${product.name}</td>
                         <td>$${product.price}</td>
                         <td><form method="post" action="/cart/delete/${product.id}"><button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></form></td>
-
                     </tr>
-                    <c:set var="totalPrice" value="${totalPrice + product.price}"/>
+                    <%--<c:set var="totalPrice" value="${totalPrice + product.price}"/>--%>
+
                 </c:forEach>
                 </tbody>
             </table>
 
-            <h3>Total price: <b>$${totalPrice}</b></h3>
+            <%--<h3>Total price: <b>$${totalPrice}</b></h3>--%>
+            <h3>Total price: <b>$${price}</b></h3>
 
             <div class="container">
                 <form role="form" enctype="multipart/form-data" class="form-horizontal" action="/cart/pay" method="post">
