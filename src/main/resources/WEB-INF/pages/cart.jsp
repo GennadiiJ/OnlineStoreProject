@@ -9,9 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" href="/png/icon.png">
-
     <style>
-
         .navbar {
             margin-bottom: 10px;
             border-radius: 0;
@@ -30,7 +28,6 @@
             background-color: #f2f2f2;
             padding: 20px;
         }
-
     </style>
 </head>
 <body>
@@ -65,7 +62,7 @@
                         </c:forEach>
                     </ul>
                 </li>
-                <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart </a></li>
@@ -83,6 +80,14 @@
     </div>
 </nav>
 
+<c:if test="${not empty session_error}">
+    <div class="container">
+        <div class="alert alert-danger fade in" style="margin-top: 15px; margin-bottom: 0px;">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Error!</strong> ${session_error}
+        </div>
+    </div>
+</c:if>
 
 <c:choose>
     <c:when test="${empty cart}">
@@ -91,7 +96,6 @@
         </div>
     </c:when>
     <c:otherwise>
-
         <c:if test="${not empty error}">
             <div class="container">
                 <div class="alert alert-danger fade in" style="margin-top: 15px; margin-bottom: 0px;">
@@ -105,7 +109,6 @@
             <h3 style="margin-bottom: 30px;">Shopping Cart</h3>
         </div>
 
-
         <div class="container">
             <table class="table table-striped">
                 <thead>
@@ -116,55 +119,50 @@
                 </tr>
                 </thead>
                 <tbody>
-                <%--<c:set var="totalPrice" value="${0}"/>--%>
                 <c:forEach items="${cart}" var="product">
                     <tr>
                         <td>${product.name}</td>
                         <td>$${product.price}</td>
-                        <td><form method="post" action="/cart/delete/${product.id}"><button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></form></td>
+                        <td>
+                            <form method="post" action="/cart/delete/${product.id}">
+                                <button type="submit" class="btn btn-default"><span
+                                        class="glyphicon glyphicon-remove"></span></button>
+                            </form>
+                        </td>
                     </tr>
-                    <%--<c:set var="totalPrice" value="${totalPrice + product.price}"/>--%>
-
                 </c:forEach>
                 </tbody>
             </table>
-
-            <%--<h3>Total price: <b>$${totalPrice}</b></h3>--%>
             <h3>Total price: <b>$${price}</b></h3>
 
             <div class="container">
-                <form role="form" enctype="multipart/form-data" class="form-horizontal" action="/cart/pay" method="post">
+                <form role="form" enctype="multipart/form-data" class="form-horizontal" action="/cart/pay"
+                      method="post">
                     <div class="form-group"><h4>Personal information:</h4></div>
-                    <div class="form-group" style="width:30%;"><input type="text" class="form-control" name="name" placeholder="Name"></div>
-                    <div class="form-group" style="width:30%;"><input type="text" class="form-control" size="50" name="email" placeholder="E-mail"></div>
-                    <div class="form-group" style="width:30%;"><input type="text" class="form-control" size="50" name="phone" placeholder="Phone number"></div>
+                    <div class="form-group" style="width:30%;"><input type="text" class="form-control" name="name"
+                                                                      placeholder="Name"></div>
+                    <div class="form-group" style="width:30%;"><input type="text" class="form-control" size="50"
+                                                                      name="email" placeholder="E-mail"></div>
+                    <div class="form-group" style="width:30%;"><input type="text" class="form-control" size="50"
+                                                                      name="phone" placeholder="Phone number"></div>
                     <br>
+
                     <div class="form-group"><input type="submit" class="btn btn-primary" value="Submit & Pay"></div>
                     <br>
                 </form>
             </div>
-
         </div>
-
     </c:otherwise>
 </c:choose>
 
-
 <footer class="container-fluid text-center">
     <p>Store Search Bar</p>
+
     <form class="form-inline" role="search" action="/search" method="post">Looking for:
         <input type="text" class="form-control" name="pattern" size="50" placeholder="Item name">
         <button type="submit" class="btn btn-danger">Search</button>
     </form>
 </footer>
-
-<script>
-    $('.dropdown-toggle').dropdown();
-
-    $( "li .searchterm" ).click(function() {
-        console.log('testing');
-    });
-</script>
 
 </body>
 </html>

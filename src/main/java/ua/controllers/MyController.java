@@ -24,7 +24,6 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/")
-/*@SessionAttributes({"cart"})*/
 public class MyController {
 
     @Autowired
@@ -32,11 +31,9 @@ public class MyController {
     @Autowired
     private SessionService sessionService;
 
-    @RequestMapping("/")
-    public String index(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        sessionService.checkCartSession(session);
 
+    @RequestMapping("/")
+    public String index(Model model) {
         model.addAttribute("categories", contactService.listCategories());
 
         return "index_categories";
@@ -44,12 +41,7 @@ public class MyController {
 
 
     @RequestMapping("/edit")
-    public String editPage(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        sessionService.checkCartSession(session);
-        /*if(!model.containsAttribute("cart")) {
-            model.addAttribute("cart", new ArrayList<Product>());
-        }*/
+    public String editPage(Model model) {
         model.addAttribute("categories", contactService.listCategories());
         model.addAttribute("products", contactService.listProducts());
         model.addAttribute("orders", contactService.listOrders());
@@ -59,10 +51,7 @@ public class MyController {
 
 
     @RequestMapping("/category/{id}")
-    public String listCategory(@PathVariable(value = "id") long categoryId, Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        sessionService.checkCartSession(session);
-
+    public String listCategory(@PathVariable(value = "id") long categoryId, Model model) {
         Category category = contactService.findCategory(categoryId);
         model.addAttribute("categories", contactService.listCategories());
         model.addAttribute("products", contactService.listProducts(category));
@@ -72,10 +61,7 @@ public class MyController {
 
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String search(@RequestParam String pattern, Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        sessionService.checkCartSession(session);
-
+    public String search(@RequestParam String pattern, Model model) {
         model.addAttribute("categories", contactService.listCategories());
         model.addAttribute("products", contactService.searchProducts(pattern));
 
@@ -85,10 +71,7 @@ public class MyController {
     /*PRODUCT ADD-DELETE*/
 
    @RequestMapping(value = "/edit/product/delete", method = RequestMethod.POST)
-    public String searchProd(@RequestParam(value = "product") long toDeleteId, Model model, HttpServletRequest request) {
-       HttpSession session = request.getSession();
-       sessionService.checkCartSession(session);
-
+    public String searchProd(@RequestParam(value = "product") long toDeleteId, Model model) {
        contactService.deleteProduct(toDeleteId);
        model.addAttribute("categories", contactService.listCategories());
        model.addAttribute("products", contactService.listProducts());
@@ -102,16 +85,11 @@ public class MyController {
                              @RequestParam String name,
                              @RequestParam String description,
                              @RequestParam int price,
-                             Model model,
-                             HttpServletRequest request)
+                             Model model)
     {
-        HttpSession session = request.getSession();
-        sessionService.checkCartSession(session);
-
         Category category = contactService.findCategory(categoryId);
         Product product = new Product(category, name, description, price);
         contactService.addProduct(product);
-
         model.addAttribute("categories", contactService.listCategories());
 
         return "index_categories";
@@ -120,10 +98,7 @@ public class MyController {
     /*CATEGORY ADD-DELETE*/
 
     @RequestMapping(value = "/edit/category/delete", method = RequestMethod.POST)
-    public String searchCat(@RequestParam(value = "category") long toDeleteId, Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        sessionService.checkCartSession(session);
-
+    public String searchCat(@RequestParam(value = "category") long toDeleteId, Model model) {
         contactService.deleteCategory(toDeleteId);
         model.addAttribute("categories", contactService.listCategories());
 
@@ -134,12 +109,8 @@ public class MyController {
     @RequestMapping(value="/edit/category/add", method = RequestMethod.POST)
     public String groupAdd(@RequestParam String name,
                            @RequestParam(value = "picture") MultipartFile picture,
-                           Model model,
-                           HttpServletRequest request)
+                           Model model)
     {
-        HttpSession session = request.getSession();
-        sessionService.checkCartSession(session);
-
         try {
             Category category = new Category(
                     name,
@@ -160,7 +131,6 @@ public class MyController {
 
     @RequestMapping(value = "/product/buy/{id}", method = RequestMethod.POST)
     public String buyProduct(@PathVariable(value = "id") long productId,
-                             /*@ModelAttribute("cart") List<Product> cart,*/
                              Model model,
                              HttpServletRequest request)
     {
@@ -186,7 +156,7 @@ public class MyController {
 
 
     @RequestMapping("/cart")
-    public String showCart(Model model, /*@ModelAttribute("cart") List<Product> cart*/ HttpServletRequest request) {
+    public String showCart(Model model, HttpServletRequest request) {
         HttpSession session = request.getSession();
         sessionService.checkCartSession(session);
         List<Product> cart = sessionService.getCart(session);
@@ -207,7 +177,6 @@ public class MyController {
 
     @RequestMapping(value = "/cart/delete/{id}", method = RequestMethod.POST)
     public String cartDelete(@PathVariable(value = "id") long productId,
-                             /*@ModelAttribute("cart") List<Product> cart,*/
                              Model model,
                              HttpServletRequest request)
     {
@@ -243,64 +212,68 @@ public class MyController {
     public String cartPay(@RequestParam String name,
                           @RequestParam String email,
                           @RequestParam String phone,
-                          /*@ModelAttribute("cart") List<Product> cart,*/
                           Model model,
                           HttpServletRequest request)
     {
         HttpSession session = request.getSession();
         sessionService.checkCartSession(session);
-        List<Product> cart = sessionService.getCart(session);
 
-        //Checking user's input length
-        if ((phone.length() > 13) || (phone.length() < 4)) {
-            model.addAttribute("error", "Incorrect phone number. Please enter valid phone number.");
+        if (sessionService.getCart(session).isEmpty()) {
+            model.addAttribute("session_error", "Session error.");
             return "cart";
-        } else if((email.length() > 128) || (name.length() > 128) || (email.length() < 4) || (name.length() < 2)){
-            model.addAttribute("error", "Incorrect input. Please enter valid information.");
-            return "cart";
+
         } else {
+            List<Product> cart = sessionService.getCart(session);
 
-            Client client = null;
-            List<Client> clients = contactService.listClients();
+            //Checking user's input length
+            if ((phone.length() > 13) || (phone.length() < 4)) {
+                model.addAttribute("error", "Incorrect phone number. Please enter valid phone number.");
+                return "cart";
+            } else if ((email.length() > 128) || (name.length() > 128) || (email.length() < 4) || (name.length() < 2)) {
+                model.addAttribute("error", "Incorrect input. Please enter valid information.");
+                return "cart";
+            } else {
 
-            //Checking if the same client already exists in database
-            for (Client c : clients) {
-                if (c.getName().equalsIgnoreCase(name) && c.getEmail().equalsIgnoreCase(email) && c.getPhone().equalsIgnoreCase(phone)) {
-                    client = c;
-                    break;
-                }
-            }
+                Client client = null;
+                List<Client> clients = contactService.listClients();
 
-            //If client doesn't exists in database, adding a new client and getting the reference to it from database
-            if (client == null) {
-                client = new Client(name, email, phone);
-                contactService.addClient(client);
-
-                clients = contactService.listClients();
+                //Checking if the same client already exists in database
                 for (Client c : clients) {
                     if (c.getName().equalsIgnoreCase(name) && c.getEmail().equalsIgnoreCase(email) && c.getPhone().equalsIgnoreCase(phone)) {
                         client = c;
                         break;
                     }
                 }
+
+                //If client doesn't exists in database, adding a new client and getting the reference to it from database
+                if (client == null) {
+                    client = new Client(name, email, phone);
+                    contactService.addClient(client);
+
+                    clients = contactService.listClients();
+                    for (Client c : clients) {
+                        if (c.getName().equalsIgnoreCase(name) && c.getEmail().equalsIgnoreCase(email) && c.getPhone().equalsIgnoreCase(phone)) {
+                            client = c;
+                            break;
+                        }
+                    }
+                }
+
+                //Creating an order by putting to it product from cart, client and current time (1 product = 1 order)
+                for (Product c : cart) {
+
+                    Date date = new Date(System.currentTimeMillis());
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    String time = sdf.format(date);
+
+                    Order order = new Order(c, client, time);
+                    contactService.addOrder(order);
+                }
+                cart.clear();
+                model.addAttribute("categories", contactService.listCategories());
+
+                return "thanks";
             }
-
-            //Creating an order by putting to it product from cart, client and current time (1 product = 1 order)
-            for (Product c : cart) {
-
-                Date date = new Date(System.currentTimeMillis());
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                String time = sdf.format(date);
-
-                Order order = new Order(c, client, time);
-                contactService.addOrder(order);
-            }
-
-            cart.clear();
-
-            model.addAttribute("categories", contactService.listCategories());
-
-            return "thanks";
         }
     }
 
@@ -333,20 +306,16 @@ public class MyController {
     }
 
 
-    @RequestMapping("/contact")
-    public String contact(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        sessionService.checkCartSession(session);
-
+    @RequestMapping("/about")
+    public String contact(Model model) {
         model.addAttribute("categories", contactService.listCategories());
 
-        return "contact";
+        return "about";
     }
 
 
     @RequestMapping(value = "/thanks", method = RequestMethod.POST)
     public String thankYou(Model model) {
-
         model.addAttribute("categories", contactService.listCategories());
 
         return "thanks";

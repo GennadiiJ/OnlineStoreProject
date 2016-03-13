@@ -10,12 +10,10 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" href="/png/icon.png">
     <style>
-
         .navbar {
             margin-bottom: 10px;
             border-radius: 0;
         }
-
 
         .jumbotron {
             margin-bottom: 0;
@@ -26,12 +24,10 @@
             color: white;
         }
 
-
         footer {
             background-color: #f2f2f2;
             padding: 20px;
         }
-
     </style>
 </head>
 <body>
@@ -66,7 +62,7 @@
                         </c:forEach>
                     </ul>
                 </li>
-                <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart </a></li>
@@ -89,42 +85,32 @@
     </h3>
 </div>
 
-
 <div class="container">
     <div class="row">
-
         <c:forEach items="${categories}" var="category">
             <div class="col-sm-3">
-                 <a href="/category/${category.id}"><div class="panel panel-primary">
-                     <div class="panel" align="center" style="margin-bottom: 0px;"><img src="/picture/${category.picture.id}" class="img-responsive" style="width:90%" alt="Image"></div>
-                     <div class="panel-footer text-center" style="font-size:130%;">${category.name}</div>
-                     </div>
-                 </a>
+                <a href="/category/${category.id}">
+                    <div class="panel panel-primary">
+                        <div class="panel" align="center" style="margin-bottom: 0px;"><img
+                                src="/picture/${category.picture.id}" class="img-responsive" style="width:90%"
+                                alt="Image"></div>
+                        <div class="panel-footer text-center" style="font-size:130%;">${category.name}</div>
+                    </div>
+                </a>
             </div>
         </c:forEach>
-
     </div>
-</div><br><br>
+</div>
+<br><br>
 
 <footer class="container-fluid text-center">
     <p>Store Search Bar</p>
+
     <form class="form-inline" role="search" action="/search" method="post">Looking for:
         <input type="text" class="form-control" name="pattern" size="50" placeholder="Item name">
         <button type="submit" class="btn btn-danger">Search</button>
     </form>
 </footer>
-
-<script>
-    /*$('.dropdown-toggle').dropdown();
-
-    $('#editpage').click(function(){
-        window.location.href='/edit';
-    })
-
-    $( "li .searchterm" ).click(function() {
-        console.log('testing');
-    });*/
-</script>
 
 </body>
 </html>

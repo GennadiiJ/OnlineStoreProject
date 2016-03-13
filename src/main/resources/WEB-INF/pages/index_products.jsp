@@ -10,7 +10,6 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" href="/png/icon.png">
     <style>
-
         .navbar {
             margin-bottom: 10px;
             border-radius: 0;
@@ -30,12 +29,10 @@
             padding: 20px;
         }
 
-        .center-panel
-        {
+        .center-panel {
             margin: 10px auto !important;
             float: none !important;
         }
-
     </style>
 </head>
 <body>
@@ -70,7 +67,7 @@
                         </c:forEach>
                     </ul>
                 </li>
-                <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
 
@@ -89,54 +86,60 @@
     </div>
 </nav>
 
-<div class="container">
-
-    <h3 style="margin-bottom: 0px;">Products:
-    </h3>
-</div>
-
-
-<div class="container">
-    <br>
-    <c:forEach items="${products}" var="product">
-    <div class="panel panel-info span5 center-panel" style="width:80%;">
-        <div class="panel-heading" style="background-color: #f2f2f2"><strong>${product.name}</strong></div>
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="panel-body" style="margin-bottom: 0px;"><img src="/picture/${product.category.picture.id}" class="img-responsive" width="300" height="170" alt="Image"></div>
-            </div>
-            <div class="col-sm-5">
-                <div class="panel-body"><p style="font-size:90%; margin-bottom: 5px;">${product.description}</p></div>
-            </div>
-            <div class="col-sm-4">
-                <div class="panel-body">Price: <strong>$${product.price}</strong></div>
-                <div class="panel-body"><form method="post" action="/product/buy/${product.id}"><button type="submit" class="btn btn-danger" style="text-align: center;">Add to Cart</button></form></div>
-            </div>
+<c:choose>
+    <c:when test="${empty products}">
+        <div class="container">
+            <h3 style="margin-bottom: 400px;">No products were found.
+            </h3>
         </div>
-    </div>
-        <br>
-    </c:forEach>
-</div>
+    </c:when>
+    <c:otherwise>
+        <div class="container">
+            <h3 style="margin-bottom: 0px;">Products:
+            </h3>
+        </div>
+
+        <div class="container">
+            <br>
+            <c:forEach items="${products}" var="product">
+                <div class="panel panel-info span5 center-panel" style="width:80%;">
+                    <div class="panel-heading" style="background-color: #f2f2f2"><strong>${product.name}</strong></div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="panel-body" style="margin-bottom: 0px;"><img
+                                    src="/picture/${product.category.picture.id}" class="img-responsive" width="300"
+                                    height="170" alt="Image"></div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="panel-body"><p
+                                    style="font-size:90%; margin-bottom: 5px;">${product.description}</p></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="panel-body">Price: <strong>$${product.price}</strong></div>
+                            <div class="panel-body">
+                                <form method="post" action="/product/buy/${product.id}">
+                                    <button type="submit" class="btn btn-danger" style="text-align: center;">Add to
+                                        Cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </c:forEach>
+        </div>
+    </c:otherwise>
+</c:choose>
 
 <footer class="container-fluid text-center">
     <p>Store Search Bar</p>
+
     <form class="form-inline" role="search" action="/search" method="post">Looking for:
         <input type="text" class="form-control" name="pattern" size="50" placeholder="Item name">
         <button type="submit" class="btn btn-danger">Search</button>
     </form>
 </footer>
-
-<script>
-    $('.dropdown-toggle').dropdown();
-
-    $('#editpage').click(function(){
-        window.location.href='/edit';
-    })
-
-    $( "li .searchterm" ).click(function() {
-        console.log('testing');
-    });
-</script>
 
 </body>
 </html>

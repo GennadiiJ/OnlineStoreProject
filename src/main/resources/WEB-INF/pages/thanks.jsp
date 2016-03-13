@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Electronics store</title>
+    <title>Electronics store - Thanks</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -10,7 +10,6 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" href="/png/icon.png">
     <style>
-
         .navbar {
             margin-bottom: 10px;
             border-radius: 0;
@@ -29,7 +28,6 @@
             background-color: #f2f2f2;
             padding: 20px;
         }
-
     </style>
 </head>
 <body>
@@ -64,7 +62,7 @@
                         </c:forEach>
                     </ul>
                 </li>
-                <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart </a></li>
@@ -86,22 +84,14 @@
     <h3 style="margin-bottom: 400px;">Thanks for your purchase.</h3>
 </div>
 
-
 <footer class="container-fluid text-center">
     <p>Store Search Bar</p>
+
     <form class="form-inline" role="search" action="/search" method="post">Looking for:
         <input type="text" class="form-control" name="pattern" size="50" placeholder="Item name">
         <button type="submit" class="btn btn-danger">Search</button>
     </form>
 </footer>
-
-<script>
-    $('.dropdown-toggle').dropdown();
-
-    $( "li .searchterm" ).click(function() {
-        console.log('testing');
-    });
-</script>
 
 </body>
 </html>

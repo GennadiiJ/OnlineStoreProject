@@ -10,12 +10,10 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" href="/png/icon.png">
     <style>
-
         .navbar {
             margin-bottom: 10px;
             border-radius: 0;
         }
-
 
         .jumbotron {
             margin-bottom: 0;
@@ -26,12 +24,10 @@
             color: white;
         }
 
-
         footer {
             background-color: #f2f2f2;
             padding: 20px;
         }
-
     </style>
 </head>
 <body>
@@ -66,7 +62,7 @@
                         </c:forEach>
                     </ul>
                 </li>
-                <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart </a></li>
@@ -84,25 +80,27 @@
     </div>
 </nav>
 
-
 <div class="container">
-    <form role="form" enctype="multipart/form-data" class="form-horizontal" style="width:30%;" action="/edit/product/add" method="post">
+    <form role="form" enctype="multipart/form-data" class="form-horizontal" style="width:30%;"
+          action="/edit/product/add" method="post">
         <div class="form-group"><h3>Add new product</h3></div>
         <select class="selectpicker form-control form-group" name="category">
-          <c:forEach items="${categories}" var="category">
-               <option value="${category.id}">${category.name}</option>
-          </c:forEach>
+            <c:forEach items="${categories}" var="category">
+                <option value="${category.id}">${category.name}</option>
+            </c:forEach>
         </select>
-            <input class="form-control form-group" type="text" name="name" placeholder="Name">
-                <input class="form-control form-group" type="text" name="description" placeholder="Description">
-                    <input class="form-control form-group" type="text" name="price" placeholder="Price">
-            <div class="form-group"><input type="submit" class="btn btn-primary" value="Ok"></div>
+        <input class="form-control form-group" type="text" name="name" placeholder="Name">
+        <input class="form-control form-group" type="text" name="description" placeholder="Description">
+        <input class="form-control form-group" type="text" name="price" placeholder="Price">
+
+        <div class="form-group"><input type="submit" class="btn btn-primary" value="Ok"></div>
     </form>
 </div>
 <hr>
 
 <div class="container">
-    <form role="form" enctype="multipart/form-data" class="form-horizontal" style="width:27%;" action="/edit/category/add" method="post">
+    <form role="form" enctype="multipart/form-data" class="form-horizontal" style="width:27%;"
+          action="/edit/category/add" method="post">
         <div class="form-group"><h3>Add new category</h3></div>
         <div class="form-group"><input type="text" class="form-control" name="name" placeholder="Name"></div>
         <div class="form-group"> Picture: <input type="file" name="picture"></div>
@@ -112,26 +110,30 @@
 <hr>
 
 <div class="container">
-    <form role="form" enctype="multipart/form-data" class="form-horizontal" style="width:30%;" action="/edit/product/delete" method="post">
+    <form role="form" enctype="multipart/form-data" class="form-horizontal" style="width:30%;"
+          action="/edit/product/delete" method="post">
         <div class="form-group"><h3>Delete product</h3></div>
         <select class="selectpicker form-control form-group" name="product">
             <c:forEach items="${products}" var="product">
                 <option value="${product.id}">${product.name}</option>
             </c:forEach>
         </select>
+
         <div class="form-group"><input type="submit" class="btn btn-primary" value="Ok"></div>
     </form>
 </div>
 <hr>
 
 <div class="container">
-    <form role="form" enctype="multipart/form-data" class="form-horizontal" style="width:30%;" action="/edit/category/delete" method="post">
+    <form role="form" enctype="multipart/form-data" class="form-horizontal" style="width:30%;"
+          action="/edit/category/delete" method="post">
         <div class="form-group"><h3>Delete category</h3></div>
         <select class="selectpicker form-control form-group" name="category">
             <c:forEach items="${categories}" var="category">
                 <option value="${category.id}">${category.name}</option>
             </c:forEach>
         </select>
+
         <div class="form-group"><input type="submit" class="btn btn-primary" value="Ok"></div>
     </form>
 </div>
@@ -157,16 +159,14 @@
 
             <td>${counter}</td>
 
-
             <c:choose>
-            <c:when test="${empty order.product.name}">
-                <td>Not available</td>
-            </c:when>
+                <c:when test="${empty order.product.name}">
+                    <td>Not available</td>
+                </c:when>
                 <c:otherwise>
                     <td>${order.product.name}</td>
                 </c:otherwise>
             </c:choose>
-
 
             <c:choose>
                 <c:when test="${empty order.product.price}">
@@ -177,7 +177,6 @@
                 </c:otherwise>
             </c:choose>
 
-
             <c:choose>
                 <c:when test="${empty order.client.name}">
                     <td>Not available</td>
@@ -187,7 +186,6 @@
                 </c:otherwise>
             </c:choose>
 
-
             <c:choose>
                 <c:when test="${empty order.client.email}">
                     <td>Not available</td>
@@ -196,7 +194,6 @@
                     <td>${order.client.email}</td>
                 </c:otherwise>
             </c:choose>
-
             <td>${order.date}</td>
             </tr>
         </c:forEach>
@@ -207,21 +204,12 @@
 
 <footer class="container-fluid text-center">
     <p>Store Search Bar</p>
+
     <form class="form-inline" role="search" action="/search" method="post">Looking for:
         <input type="text" class="form-control" name="pattern" size="50" placeholder="Item name">
         <button type="submit" class="btn btn-danger">Search</button>
     </form>
 </footer>
-
-<script>
-    $('.dropdown-toggle').dropdown();
-
-    $('.selectpicker').selectpicker();
-
-    $( "li .searchterm" ).click(function() {
-        console.log('testing');
-    });
-</script>
 
 </body>
 </html>
