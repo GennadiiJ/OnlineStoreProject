@@ -219,21 +219,37 @@ public class MyController {
         sessionService.checkCartSession(session);
 
         if (sessionService.getCart(session).isEmpty()) {
+			model.addAttribute("categories", contactService.listCategories());
             model.addAttribute("session_error", "Session error.");
             return "cart";
 
         } else {
+			
             List<Product> cart = sessionService.getCart(session);
-
-            //Checking user's input length
+			
+			//Counting order price
+				int price = 0;
+				for (Product p : cart) {
+					price = price + p.getPrice();
+				}
+				
+            //Checking user's phone number length
             if ((phone.length() > 13) || (phone.length() < 4)) {
-                model.addAttribute("error", "Incorrect phone number. Please enter valid phone number.");
+				model.addAttribute("error", "Incorrect phone number. Please enter valid phone number.");
+				model.addAttribute("price", price);
+				model.addAttribute("cart", cart);
+				model.addAttribute("categories", contactService.listCategories());
                 return "cart";
-            } else if ((email.length() > 128) || (name.length() > 128) || (email.length() < 4) || (name.length() < 2)) {
+				
+			//Checking user's input length	
+            } else if ((email.length() > 70) || (name.length() > 70) || (email.length() < 4) || (name.length() < 2)) {
                 model.addAttribute("error", "Incorrect input. Please enter valid information.");
+				model.addAttribute("price", price);
+				model.addAttribute("cart", cart);
+				model.addAttribute("categories", contactService.listCategories());
                 return "cart";
+				
             } else {
-
                 Client client = null;
                 List<Client> clients = contactService.listClients();
 
